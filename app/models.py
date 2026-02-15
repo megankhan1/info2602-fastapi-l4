@@ -2,6 +2,15 @@ from sqlmodel import Field, SQLModel, Relationship
 from typing import Optional
 from pydantic import EmailStr   #insert at top of the file
 
+class Token(SQLModel):
+    access_token: str
+    token_type: str
+
+class UserResponse(SQLModel):
+    id: Optional[int]
+    username:str
+    email: EmailStr
+
 class User(SQLModel, table=False):
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str = Field(index=True, unique=True)
@@ -42,3 +51,20 @@ class Todo(SQLModel, table=True):
     
     def get_cat_list(self):
         return ', '.join([category.text for category in self.categories])
+
+class UserCreate(SQLModel):
+    username:str
+    email: EmailStr = Field(max_length=255)
+    password: str = Field(min_length=8, max_length=128)
+
+class TodoCreate(SQLModel):
+    text:str
+
+class TodoResponse(SQLModel):
+    id: Optional[int] = Field(primary_key=True, default=None)
+    text:str
+    done: bool = False
+
+class TodoUpdate(SQLModel):
+    text: Optional[str] = None
+    done: Optional[bool] = None
